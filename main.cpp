@@ -1,90 +1,178 @@
 #include <iostream>
 #include <string>
-bool nCorrect(std::string n){
-    bool minus = n.length() > 0 && n[0] == '-';
-    bool dot = false;
+std::string result (std::string numb1, std::string numb2)
+{
+    int i = 0;
+    std::string result = "";
+    if(numb1[0] == '-' && numb2[0] == '-')
+    {
+        while (numb1[i] == numb2[i] && i < numb2.length())
+        {
+            ++i;
+        }
+        if(numb1[i] > numb2[i])
+        {
+            result += "Less";
+        }
+        else if (numb1[i] < numb2[i])
+        {
+            result += "More";
+        }
+        else
+        {
+            result += "Equal";
+        }
+    }
+    else
+    {
+        while (numb1[i] == numb2[i] && i < numb2.length())
+        {
+            ++i;
+        }
+        if(numb1[i] < numb2[i])
+        {
+            result += "Less";
+        }
+        else if (numb1[i] > numb2[i])
+        {
+            result += "More";
+        }
+        else
+        {
+            result += "Equal";
+        }
+    }
+
+    return result;
+}
+
+int dotCounter (std::string str)
+{
+    int dot = 0;
+    for(int i = 0; i < str.length();++i)
+    {
+        if(str[i] == '.')
+        {
+            ++dot;
+        }
+    }
+    return dot;
+}
+
+bool nCorrect(std::string numb)
+{
+    bool nCorrect = true;
+    bool minus = false;
+    int dotCounter = 0;
     int dotPosition = 0;
-    for (int i = 0; !dot && i < n.length(); ++i){
-        if (n[i] == '.'){
-            dot = true;
+    if (numb.length() > 0 && numb[0] == '-')
+    {
+        minus = true;
+    }
+    for (int i = 0; i < numb.length(); ++i)
+    {
+        if (numb[i] == '.')
+        {
+            ++dotCounter;
             dotPosition = i;
         }
     }
-    bool good = true;
-
-    int nStart = minus ? 1 : 0;
-    int nEnd = (dot ? dotPosition : (int)n.length());
-
-    for (int i = nStart; i < nEnd; ++i){
-        if (n[i] < '0' || n[i] > '9'){
-            good = false;
-        }
-    }
-
-    int dotStart = dot ? dotPosition + 1 : n.length();
-
-    for (int i = dotStart; i < n.length(); ++i){
-        if (n[i] < '0' || n[i] > '9'){
-            good = false;
-        }
-    }
-
-    if ((nEnd - nStart) + (n.length() - dotStart) == 0){
-        good = false;
-    }
-    return (good ? 1 : 0);
-}
-int d(std::string part)
-{
-    int number = 0;
-    for(int i = 0;i < part.length() ;++i)
+    if (dotCounter > 1)
     {
-        if(part[0] == '-')
+        nCorrect = false;
+
+    }
+    else
+    {
+        int iStart = 0;
+        int iEnd = (int)numb.length();
+        if (minus) ++iStart;
+        if (dotCounter == 1) iEnd = dotPosition;
+        if ((iStart == dotPosition) && dotPosition + 1 == (int)numb.length()) nCorrect = false;
+        for (int i = iStart; i < iEnd; ++i)
         {
-            i = 1;
-            int digit = part[i] -'0';
-            number = (number * 10 + digit) * -1;
+            if (numb[i] < '0' || numb[i] > '9')
+            {
+                nCorrect = false;
+            }
         }
-        else
+        if(nCorrect && dotCounter == 1)
         {
-            int digit = part[i] -'0';
-            number = number * 10 + digit;
+            for (int i = dotPosition + 1; i < numb.length(); ++i)
+            {
+                if (numb[i] < '0' || numb[i] > '9')
+                {
+                    nCorrect = false;
+                }
+            }
         }
     }
-    return  number;
+    return nCorrect;
 }
 
+template <typename T_STR, typename T_CHAR>
+T_STR remove_leading(T_STR const & str, T_CHAR c)
+{
+    auto end = str.end();
+    for (auto i = str.begin(); i != end; ++i) {
+        if (*i != c) {
+            return T_STR(i, end);
+        }
+    }
+    return T_STR();
+}
 
 int main() {
-    std::string numb1,numb2;
+
+    char dot = '.';
+    char null = '0';
+    std::string numb1;
+    std::string numb2;
+    int differenceStr;
+
     std::cout << "Enter a number one: \n";
     std::cin >> numb1;
+    while (!nCorrect(numb1))
+    {
+        std::cout << "ERROR!Enter a number one: \n";
+        std::cin >> numb1;
+    }
+    if (numb1[0] == '0')
+    {
+        numb1 = remove_leading(numb1,'0');
+    }
+    if(dotCounter(numb1) == 0)
+    {
+        numb1 += dot;
+    }
+
     std::cout << "Enter a number two: \n";
     std::cin >> numb2;
-    if(!nCorrect(numb1) || !nCorrect(numb2))
+    while (!nCorrect(numb2))
     {
-        std::cout << "The numbers is incorrect";
+        std::cout << "ERROR!Enter a number two: \n";
+        std::cin >> numb2;
     }
-    else {
-        std::string numb1part1, numb1part2, numb2part1, numb2part2;
-        for (int i = 0; i < numb1.length() && numb1[i] != '.'; ++i) {
-            numb1part1 += numb1[i];
-        }
-        std::cout << numb1part1 <<d(numb1part1) << "\n";
-        for (int i = 0; i < numb2.length() && numb2[i] != '.'; ++i) {
-            numb2part1 += numb2[i];
-        }
-        std::cout << numb2part1 << d(numb2part1) << "\n";
-        if (d(numb1part1) < d(numb2part1)) {
-            std::cout << "Less\n";
-        }
-        else if (d(numb1part1) > d(numb2part1))
+    if(dotCounter(numb2) == 0)
+    {
+        numb2 += dot;
+    }
+
+    if(numb1.length() < numb2.length())
+    {
+        differenceStr = numb2.length() - numb1.length();
+        for(int i = 0;i < differenceStr; i++)
         {
-            std::cout << "More\n";
-        }
-        else
-        {
-            std::cout << "Equal\n";
+            numb1 += null;
         }
     }
+    else if(numb1.length() > numb2.length())
+    {
+        differenceStr = numb1.length() - numb2.length();
+        for(int i = 0;i < differenceStr; i++)
+        {
+            numb2 += null;
+        }
+    }
+    std::cout << result(numb1,numb2);
 }
