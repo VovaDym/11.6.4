@@ -3,43 +3,43 @@
 std::string result (std::string numb1, std::string numb2)
 {
     int i = 0;
-    std::string result = "";
+    std::string result;
     if(numb1[0] == '-' && numb2[0] == '-')
     {
-        while (numb1[i] == numb2[i] && i < numb2.length())
+        while (i < numb2.length() && numb1[i] == numb2[i] )
         {
             ++i;
         }
         if(numb1[i] > numb2[i])
         {
-            result += "Less";
+            result = "Less";
         }
         else if (numb1[i] < numb2[i])
         {
-            result += "More";
+            result = "More";
         }
         else
         {
-            result += "Equal";
+            result = "Equal";
         }
     }
     else
     {
-        while (numb1[i] == numb2[i] && i < numb2.length())
+        while (i < numb2.length() && numb1[i] == numb2[i] )
         {
             ++i;
         }
         if(numb1[i] < numb2[i])
         {
-            result += "Less";
+            result = "Less";
         }
         else if (numb1[i] > numb2[i])
         {
-            result += "More";
+            result = "More";
         }
         else
         {
-            result += "Equal";
+            result = "Equal";
         }
     }
 
@@ -65,6 +65,10 @@ bool nCorrect(std::string numb)
     bool minus = false;
     int dotCounter = 0;
     int dotPosition = 0;
+    if(numb.length() == 1)
+    {
+        numb += '.';
+    }
     if (numb.length() > 0 && numb[0] == '-')
     {
         minus = true;
@@ -110,16 +114,20 @@ bool nCorrect(std::string numb)
     return nCorrect;
 }
 
-template <typename T_STR, typename T_CHAR>
-T_STR remove_leading(T_STR const & str, T_CHAR c)
+std::string numb_not_noll (std::string numb)
 {
-    auto end = str.end();
-    for (auto i = str.begin(); i != end; ++i) {
-        if (*i != c) {
-            return T_STR(i, end);
-        }
+    std::string buf;
+    int i = 0;
+    while (i < numb.length() && numb[i] == '0')
+    {
+        ++i;
     }
-    return T_STR();
+    for (;i < numb.length();++i)
+    {
+        buf += numb[i];
+    }
+    numb = buf;
+    return numb;
 }
 
 int main() {
@@ -139,7 +147,7 @@ int main() {
     }
     if (numb1[0] == '0')
     {
-        numb1 = remove_leading(numb1,'0');
+        numb1 = numb_not_noll(numb1);
     }
     if(dotCounter(numb1) == 0)
     {
@@ -152,6 +160,10 @@ int main() {
     {
         std::cout << "ERROR!Enter a number two: \n";
         std::cin >> numb2;
+    }
+    if (numb2[0] == '0')
+    {
+        numb2 = numb_not_noll(numb2);
     }
     if(dotCounter(numb2) == 0)
     {
